@@ -3,8 +3,8 @@
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { useMutation } from '@apollo/client';
-import { REGISTER } from '@/lib/graphql/mutations/mutations'; // Мутация
-import { setVisitorToken } from '@/lib/auth/auth'; // Функция для сохранения токена
+import { REGISTER } from '@/lib/graphql/mutations/mutations';
+import { setVisitorToken } from '@/lib/auth/auth';
 
 const MainPageWelcome = () => {
   const [isLoading, setIsLoading] = useState(false);
