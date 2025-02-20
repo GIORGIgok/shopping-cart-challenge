@@ -15,3 +15,28 @@ export const CART_ITEM_UPDATE = gql`
     }
   }
 `;
+
+export const ITEM_QUANTITY_UPDATED = gql`
+  subscription ItemQuantityUpdated {
+    itemQuantityUpdated {
+      _id
+      quantity
+      product {
+        title
+        cost
+      }
+    }
+  }
+`;
+
+export const ITEM_OUT_OF_STOCK = gql`
+  subscription ItemOutOfStock {
+    itemOutOfStock {
+      _id
+      product {
+        title
+        cost
+      }
+    }
+  }
+`;

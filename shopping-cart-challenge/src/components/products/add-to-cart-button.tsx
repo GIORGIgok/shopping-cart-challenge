@@ -1,31 +1,19 @@
 'use client';
-import { ADD_ITEM } from '@/lib/graphql/mutations/mutations';
-import { useMutation } from '@apollo/client';
 
-export default function AddToCartButton({ productId }: { productId: string }) {
-  const [addToCart] = useMutation(ADD_ITEM, {
-    onCompleted: (data) => {
-      console.log('Product added to cart:', data);
-    },
-    onError: (error) => {
-      console.error('Error adding product to cart:', error);
-    },
-  });
+import { useCart } from '@/contexts/cart-context';
+import { Product } from '@/types/graphql';
 
-  const handleAddToCart = () => {
-    console.log('Adding product to cart with ID:', productId); // Check the productId
-    console.log('Variables:', { productId, quantity: 1 }); // Check this
-    addToCart({
-      variables: {
-        productId,
-        quantity: 1,
-      },
-    });
-  };
+export default function AddToCartButton({ product }: { product: Product }) {
+  const { addToCart, loading } = useCart();
+
+  const handleAddToCart = () => [addToCart(product)];
 
   return (
     <button
-      className="mt-2 rounded bg-green-700 px-4 py-2 text-sm font-bold text-white transition duration-300 hover:bg-green-600"
+      disabled={product.availableQuantity === 0 || loading}
+      className={`mt-2 rounded bg-green-700 px-4 py-2 text-sm font-bold text-white transition duration-300 hover:bg-green-600 ${
+        product.availableQuantity === 0 && 'cursor-not-allowed opacity-50'
+      }, ${loading && 'cursor-wait opacity-50'}`}
       onClick={handleAddToCart}
     >
       Add to Cart

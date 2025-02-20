@@ -1,4 +1,5 @@
 import { Product } from '@/types/graphql';
+import AddToCartButton from './add-to-cart-button';
 
 export default async function ProductItem({
   productProps,
@@ -19,9 +20,7 @@ export default async function ProductItem({
       <p className="text-sm text-blue-900">{productProps.createdAt}</p>
       <p className="text-sm text-blue-900">{productProps.updatedAt}</p>
 
-      <button className="mt-2 rounded bg-green-700 px-4 py-2 text-sm font-bold text-white transition duration-300 hover:bg-green-600">
-        Add to Cart
-      </button>
+      <AddToCartButton product={productProps} />
     </article>
   );
 }

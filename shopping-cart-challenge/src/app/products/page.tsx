@@ -4,11 +4,12 @@ import { GET_PRODUCTS } from '@/lib/graphql/queries/queries';
 import ProductItem from '@/components/products/product-item';
 import { Product } from '@/types/graphql';
 import FixedCart from '@/components/cart/fixed-cart';
+import Link from 'next/link';
 
 async function fetchData(visitorToken: string) {
   const query = print(GET_PRODUCTS);
 
-  const response = await fetch('https://take-home-be.onrender.com/api', {
+  const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -28,7 +29,13 @@ export default async function ProductsPage() {
   const token = cookieStore.get('visitor_token')?.value;
 
   if (!token) {
-    return <div>Please log in to view products and cart.</div>;
+    return (
+      <div className="flex h-screen items-center justify-center">
+        <Link className="font-bold text-yellow-400" href="/">
+          Please log in to view products and cart.
+        </Link>
+      </div>
+    );
   }
 
   const data = await fetchData(token);

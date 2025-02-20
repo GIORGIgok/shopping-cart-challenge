@@ -1,17 +1,38 @@
 'use client';
 
-import { useQuery } from '@apollo/client';
+import { FC, useEffect } from 'react';
 import Link from 'next/link';
+import { useCart } from '@/contexts/cart-context';
+import { useQuery } from '@apollo/client';
 import { GET_CART } from '@/lib/graphql/queries/queries';
-// import { CartItem } from '@/types/graphql';
+import { Cart } from '@/types/graphql';
 
-export default function Page() {
-  const { data, loading, error } = useQuery(GET_CART);
+const Page: FC = () => {
+  const {
+    cart,
+    setCart,
+    loading: contextLoading,
+    error: contextError,
+  } = useCart();
+  const { data, loading, error } = useQuery<{ getCart: Cart }>(GET_CART);
 
-  if (loading) return <p className="text-center text-white">Loading cart...</p>;
+  useEffect(() => {
+    if (data?.getCart) {
+      setCart(data.getCart);
+    }
+  }, [data, setCart]);
 
-  if (error)
-    return <p className="text-center text-white">Error: {error.message}</p>;
+  if (contextLoading || loading) {
+    return <p className="text-center text-white">Loading cart...</p>;
+  }
+
+  if (contextError || error) {
+    return (
+      <p className="text-center text-white">
+        Error: {contextError?.message || error?.message}
+      </p>
+    );
+  }
 
   return (
     <main className="h-screen w-full bg-slate-600 p-4">
@@ -26,22 +47,30 @@ export default function Page() {
       </h2>
 
       <div className="mx-auto mt-4 max-w-xl rounded-lg bg-gray-700 p-4 shadow-lg">
-        {data.getCart.items.length === 0 ? (
-          <p className="text-center text-gray-300">Your cart is empty.</p>
-        ) : (
-          data.getCart.items.map((item: any) => (
-            <div
-              key={item._id}
-              className="flex items-center justify-between border-b border-gray-600 py-2"
-            >
-              <span className="text-white">
-                {item.product.title} - ${item.product.cost}
-              </span>
+        {cart?.items.map((item) => (
+          <div
+            key={item._id}
+            className="flex items-center justify-between border-b border-gray-600 py-2"
+          >
+            <div className="text-white">
+              <h3 className="font-medium">{item.product.title}</h3>
+              <p>Price: ${item.product.cost}</p>
+            </div>
+            <div className="flex items-center space-x-4">
               <span className="text-white">Quantity: {item.quantity}</span>
             </div>
-          ))
-        )}
+          </div>
+        ))}
+
+        <div className="mt-4 text-right text-lg font-bold text-white">
+          Total: $
+          {cart?.items
+            .reduce((sum, item) => sum + item.quantity * item.product.cost, 0)
+            .toFixed(2)}
+        </div>
       </div>
     </main>
   );
-}
+};
+
+export default Page;
