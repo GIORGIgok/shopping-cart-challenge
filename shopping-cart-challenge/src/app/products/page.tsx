@@ -1,6 +1,9 @@
 import { cookies } from 'next/headers';
 import { print } from 'graphql/language/printer';
 import { GET_PRODUCTS } from '@/lib/graphql/queries/queries';
+import ProductItem from '@/components/products/product-item';
+import { Product } from '@/types/graphql';
+import FixedCart from '@/components/cart/fixed-cart';
 
 async function fetchData(visitorToken: string) {
   const query = print(GET_PRODUCTS);
@@ -31,14 +34,17 @@ export default async function ProductsPage() {
   const data = await fetchData(token);
 
   return (
-    <>
-      {data?.getProducts?.products?.map((item: any) => (
-        <div key={item._id}>
-          <h2>{item.title}</h2>
-          <p>{item.cost}</p>
-          <p>{item.availableQuantity}</p>
-        </div>
-      ))}
-    </>
+    <section className="relative w-full bg-slate-600 p-4">
+      <FixedCart />
+      <h2 className="my-4 bg-gradient-to-r from-gray-200 to-violet-500 bg-clip-text text-center text-lg font-semibold text-transparent sm:text-2xl">
+        Our Products:
+      </h2>
+
+      <main className="flex w-full flex-wrap items-center justify-center gap-6">
+        {data?.getProducts?.products?.map((item: Product) => (
+          <ProductItem key={item._id} productProps={item} />
+        ))}
+      </main>
+    </section>
   );
 }

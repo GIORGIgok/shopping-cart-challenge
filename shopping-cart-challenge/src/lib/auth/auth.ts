@@ -1,7 +1,7 @@
 import { NextRequest } from 'next/server';
 
 export const setVisitorToken = (token: string) => {
-  document.cookie = `visitor_token=${token}; path=/; Secure=true; SameSite=Strict; max-age=10`;
+  document.cookie = `visitor_token=${token}; path=/; Secure=true; SameSite=Strict; max-age=3600`; // 1hr
 };
 
 export const getVisitorToken = (req: NextRequest) =>
