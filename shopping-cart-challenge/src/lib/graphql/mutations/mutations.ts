@@ -24,3 +24,29 @@ export const REMOVE_ITEM = gql`
     }
   }
 `;
+
+export const UPDATE_ITEM_QUANTITY = gql`
+  mutation UpdateItemQuantity($input: UpdateItemQuantityArgs!) {
+    updateItemQuantity(input: $input) {
+      _id
+      hash
+      items {
+        _id
+        quantity
+      }
+    }
+  }
+`;
+
+export const REGISTER = gql`
+  mutation Register {
+    register {
+      token
+      _id
+      cartId
+      isActive
+      createdAt
+      updatedAt
+    }
+  }
+`;
