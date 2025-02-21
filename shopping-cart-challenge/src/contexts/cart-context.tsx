@@ -7,11 +7,12 @@ import React, {
   useEffect,
   PropsWithChildren,
 } from 'react';
-import { useQuery, useMutation } from '@apollo/client';
+import { useQuery, useMutation, useSubscription } from '@apollo/client';
 import { GET_CART } from '@/lib/graphql/queries/queries';
 import { ADD_ITEM } from '@/lib/graphql/mutations/mutations';
 import { Cart, Product } from '@/types/graphql';
 import { parseCookies } from 'nookies';
+import { CART_ITEM_UPDATE } from '@/lib/graphql/subscriptions/subscriptions';
 
 interface CartContextType {
   cart: Cart | null;
@@ -44,7 +45,7 @@ export const CartProvider: React.FC<PropsWithChildren> = ({ children }) => {
   const [addProductToCart, { loading: mutationLoading, error: mutationError }] =
     useMutation(ADD_ITEM, {
       onCompleted: (data) => {
-        console.log('Cart updated:', data);
+        // console.log('Cart updated:', data);
         setCart(data.addToCart);
         refetch();
       },
@@ -64,15 +65,60 @@ export const CartProvider: React.FC<PropsWithChildren> = ({ children }) => {
     };
   }, [data]);
 
+  useSubscription(CART_ITEM_UPDATE, {
+    onData: ({ data }) => {
+      if (!data?.data?.cartItemUpdate) return;
+
+      const { event, payload } = data.data.cartItemUpdate;
+      //   console.log("event from ondata =>", event);
+      //   console.log("payload from ondata =>", payload);
+
+      setCart((prevCart) => {
+        if (!prevCart) return prevCart;
+
+        switch (event) {
+          case 'ITEM_OUT_OF_STOCK':
+            return {
+              ...prevCart,
+              items: prevCart.items.filter(
+                (item) => item.product._id !== payload._id,
+              ),
+            };
+
+          case 'ITEM_QUANTITY_UPDATED':
+            return {
+              ...prevCart,
+              items: prevCart.items.map((item) =>
+                item.product._id === payload._id
+                  ? { ...item, quantity: payload.quantity }
+                  : item,
+              ),
+            };
+
+          default:
+            return prevCart;
+        }
+      });
+    },
+  });
+
   const addToCart = (product: Product) => {
-    addProductToCart({
-      variables: {
-        input: {
-          productId: product._id,
-          quantity: 1,
+    const existingItem = cart?.items.find(
+      (item) => item.product._id === product._id,
+    );
+
+    if (existingItem) {
+      alert('This product is already in your cart!');
+    } else {
+      addProductToCart({
+        variables: {
+          input: {
+            productId: product._id,
+            quantity: 1,
+          },
         },
-      },
-    });
+      });
+    }
   };
 
   return (

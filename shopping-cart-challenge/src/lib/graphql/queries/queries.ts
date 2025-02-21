@@ -27,6 +27,7 @@ export const GET_CART = gql`
           _id
           title
           cost
+          availableQuantity
         }
         quantity
       }
