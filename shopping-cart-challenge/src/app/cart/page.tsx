@@ -1,13 +1,14 @@
 'use client';
 
-import { FC, useEffect } from 'react';
+import { useEffect } from 'react';
 import Link from 'next/link';
 import { useCart } from '@/contexts/cart-context';
 import { useQuery } from '@apollo/client';
 import { GET_CART } from '@/lib/graphql/queries/queries';
 import { Cart } from '@/types/graphql';
+import CartItem from '@/components/cart/cart-item';
 
-const Page: FC = () => {
+export default function CartPage() {
   const {
     cart,
     setCart,
@@ -47,22 +48,9 @@ const Page: FC = () => {
       </h2>
 
       <div className="mx-auto mt-4 max-w-xl rounded-lg bg-gray-700 p-4 shadow-lg">
-        {cart?.items.map((item) => (
-          <div
-            key={item._id}
-            className="flex items-center justify-between border-b border-gray-600 py-2"
-          >
-            <div className="text-white">
-              <h3 className="font-medium">{item.product.title}</h3>
-              <p>Price: ${item.product.cost}</p>
-            </div>
-            <div className="flex items-center space-x-4">
-              <span className="text-white">Quantity: {item.quantity}</span>
-            </div>
-          </div>
-        ))}
+        {cart?.items.map((item) => <CartItem key={item._id} item={item} />)}
 
-        <div className="mt-4 text-right text-lg font-bold text-white">
+        <div className="mt-4 text-right text-lg font-bold text-green-200">
           Total: $
           {cart?.items
             .reduce((sum, item) => sum + item.quantity * item.product.cost, 0)
@@ -71,6 +59,4 @@ const Page: FC = () => {
       </div>
     </main>
   );
-};
-
-export default Page;
+}
