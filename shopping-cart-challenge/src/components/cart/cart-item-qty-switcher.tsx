@@ -84,7 +84,10 @@ const CartItemQtySwitcher: FC<CartItemProps> = ({ cartItemProps }) => {
       <span className="text-white">{cartItemProps.quantity}</span>
       <button
         onClick={increaseQuantity}
-        className="rounded bg-green-500 px-3 py-1 text-white hover:bg-green-700"
+        className={`rounded bg-green-500 px-3 py-1 text-white hover:bg-green-700 ${cartItemProps.product.availableQuantity === cartItemProps.quantity ? 'cursor-not-allowed opacity-50' : ''}`}
+        disabled={
+          cartItemProps.product.availableQuantity === cartItemProps.quantity
+        }
       >
         +
       </button>
