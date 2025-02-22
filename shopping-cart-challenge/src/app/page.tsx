@@ -1,6 +1,6 @@
-// import Image from 'next/image';
-
 import MainPageWelcome from '@/components/main-page-welcome/main-page-welcome';
+
+export const dynamic = 'force-dynamic';
 
 export default function Home() {
   return (
