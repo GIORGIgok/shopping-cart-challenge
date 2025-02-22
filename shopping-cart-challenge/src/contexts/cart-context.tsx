@@ -38,7 +38,6 @@ export const CartProvider: React.FC<PropsWithChildren> = ({ children }) => {
   } = useQuery(GET_CART, {
     skip: !token,
     fetchPolicy: 'network-only',
-    nextFetchPolicy: 'cache-first',
     onError: (err) => {
       console.error('Error fetching cart:', err);
       setError(err);

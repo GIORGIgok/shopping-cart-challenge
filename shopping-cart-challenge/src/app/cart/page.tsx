@@ -18,7 +18,6 @@ export default function CartPage() {
 
   const { data, loading, error } = useQuery<{ getCart: Cart }>(GET_CART, {
     fetchPolicy: 'network-only',
-    nextFetchPolicy: 'cache-first',
   });
 
   useEffect(() => {
