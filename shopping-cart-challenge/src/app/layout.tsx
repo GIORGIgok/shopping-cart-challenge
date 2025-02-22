@@ -1,7 +1,7 @@
 import './globals.css';
 import { PropsWithChildren } from 'react';
-import { ApolloWrapper } from './apolloWrapper';
 import { CartProvider } from '@/contexts/cart-context';
+import { ApolloWrapper } from '@/lib/graphql/apollo/apollo-provider';
 
 export default function RootLayout({ children }: PropsWithChildren) {
   return (

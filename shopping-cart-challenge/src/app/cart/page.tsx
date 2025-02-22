@@ -16,7 +16,10 @@ export default function CartPage() {
     error: contextError,
   } = useCart();
 
-  const { data, loading, error } = useQuery<{ getCart: Cart }>(GET_CART);
+  const { data, loading, error } = useQuery<{ getCart: Cart }>(GET_CART, {
+    fetchPolicy: 'network-only',
+    nextFetchPolicy: 'cache-first',
+  });
 
   useEffect(() => {
     if (data?.getCart) {
@@ -25,7 +28,9 @@ export default function CartPage() {
   }, [data, setCart]);
 
   if (contextLoading || loading) {
-    return <p className="text-center text-white">Loading cart...</p>;
+    <article className="flex h-screen min-h-screen w-full items-center justify-center bg-slate-600">
+      <p className="text-center text-white">Loading cart...</p>;
+    </article>;
   }
 
   if (contextError || error) {

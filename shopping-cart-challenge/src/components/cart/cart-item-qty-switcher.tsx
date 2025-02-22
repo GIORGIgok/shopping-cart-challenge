@@ -3,6 +3,10 @@ import {
   UPDATE_ITEM_QUANTITY,
 } from '@/lib/graphql/mutations/mutations';
 import { GET_CART } from '@/lib/graphql/queries/queries';
+import {
+  cartRemoveItemSchema,
+  cartUpdateItemQuantitySchema,
+} from '@/lib/utils/validation';
 import { CartItem } from '@/types/graphql';
 import { useMutation } from '@apollo/client';
 import { FC } from 'react';
@@ -15,39 +19,50 @@ const CartItemQtySwitcher: FC<CartItemProps> = ({ cartItemProps }) => {
   const [updateQuantity] = useMutation(UPDATE_ITEM_QUANTITY, {
     update(cache, { data }) {
       const existingCart = cache.readQuery({ query: GET_CART });
-
       if (!existingCart || !data?.updateCartItem) return;
-
       cache.writeQuery({
         query: GET_CART,
         data: { getCart: data.updateCartItem },
       });
     },
     onError(error) {
-      // do something
+      console.error('Error updating quantity:', error);
     },
   });
 
   const [removeItem] = useMutation(REMOVE_ITEM, {
     update(cache, { data }) {
       const existingCart = cache.readQuery({ query: GET_CART });
-
       if (!existingCart || !data?.removeCartItem) return;
-
       cache.writeQuery({
         query: GET_CART,
         data: { getCart: data.removeCartItem },
       });
     },
     onError(error) {
-      // do something
+      console.error('Error removing item:', error);
     },
   });
 
   const decreaseQuantityOrRemove = () => {
     if (cartItemProps.quantity === 1) {
+      const validation = cartRemoveItemSchema.safeParse({
+        cartItemId: cartItemProps._id,
+      });
+      if (!validation.success) {
+        console.error('Validation failed:', validation.error.format());
+        return;
+      }
       removeItem({ variables: { input: { cartItemId: cartItemProps._id } } });
     } else {
+      const validation = cartUpdateItemQuantitySchema.safeParse({
+        cartItemId: cartItemProps._id,
+        quantity: cartItemProps.quantity - 1,
+      });
+      if (!validation.success) {
+        console.error('Validation failed:', validation.error.format());
+        return;
+      }
       updateQuantity({
         variables: {
           input: {
@@ -62,6 +77,15 @@ const CartItemQtySwitcher: FC<CartItemProps> = ({ cartItemProps }) => {
   const increaseQuantity = () => {
     if (cartItemProps.quantity >= cartItemProps.product.availableQuantity)
       return;
+
+    const validation = cartUpdateItemQuantitySchema.safeParse({
+      cartItemId: cartItemProps._id,
+      quantity: cartItemProps.quantity + 1,
+    });
+    if (!validation.success) {
+      console.error('Validation failed:', validation.error.format());
+      return;
+    }
 
     updateQuantity({
       variables: {

@@ -13,6 +13,7 @@ import { ADD_ITEM } from '@/lib/graphql/mutations/mutations';
 import { Cart, Product } from '@/types/graphql';
 import { parseCookies } from 'nookies';
 import { CART_ITEM_UPDATE } from '@/lib/graphql/subscriptions/subscriptions';
+import { cartAddItemSchema } from '@/lib/utils/validation';
 
 interface CartContextType {
   cart: Cart | null;
@@ -36,11 +37,43 @@ export const CartProvider: React.FC<PropsWithChildren> = ({ children }) => {
     refetch,
   } = useQuery(GET_CART, {
     skip: !token,
+    fetchPolicy: 'network-only',
+    nextFetchPolicy: 'cache-first',
     onError: (err) => {
       console.error('Error fetching cart:', err);
       setError(err);
     },
   });
+
+  const addToCart = (product: Product) => {
+    const existingItem = cart?.items.find(
+      (item) => item.product._id === product._id,
+    );
+
+    if (existingItem) {
+      alert('This product is already in your cart!');
+      return;
+    }
+
+    const validation = cartAddItemSchema.safeParse({
+      productId: product._id,
+      quantity: 1,
+    });
+
+    if (!validation.success) {
+      console.error('Validation error:', validation.error.format());
+      return;
+    }
+
+    addProductToCart({
+      variables: {
+        input: {
+          productId: product._id,
+          quantity: 1,
+        },
+      },
+    });
+  };
 
   const [addProductToCart, { loading: mutationLoading, error: mutationError }] =
     useMutation(ADD_ITEM, {
@@ -101,25 +134,6 @@ export const CartProvider: React.FC<PropsWithChildren> = ({ children }) => {
       });
     },
   });
-
-  const addToCart = (product: Product) => {
-    const existingItem = cart?.items.find(
-      (item) => item.product._id === product._id,
-    );
-
-    if (existingItem) {
-      alert('This product is already in your cart!');
-    } else {
-      addProductToCart({
-        variables: {
-          input: {
-            productId: product._id,
-            quantity: 1,
-          },
-        },
-      });
-    }
-  };
 
   return (
     <CartContext.Provider

@@ -21,22 +21,22 @@ export const cartUpdateItemQuantitySchema = z.object({
   quantity: z.number().min(1),
 });
 
-export function validateInput<T>(
-  schema: z.ZodType<T>,
-  data: unknown,
-): {
-  success: boolean;
-  data?: T;
-  error?: string;
-} {
-  try {
-    const validData = schema.parse(data);
-    return { success: true, data: validData };
-  } catch (error) {
-    if (error instanceof z.ZodError) {
-      const errorMessage = error.errors.map((e) => e.message).join(', ');
-      return { success: false, error: errorMessage };
-    }
-    return { success: false, error: 'Validation failed' };
-  }
-}
+// export function validateInput<T>(
+//   schema: z.ZodType<T>,
+//   data: unknown,
+// ): {
+//   success: boolean;
+//   data?: T;
+//   error?: string;
+// } {
+//   try {
+//     const validData = schema.parse(data);
+//     return { success: true, data: validData };
+//   } catch (error) {
+//     if (error instanceof z.ZodError) {
+//       const errorMessage = error.errors.map((e) => e.message).join(', ');
+//       return { success: false, error: errorMessage };
+//     }
+//     return { success: false, error: 'Validation failed' };
+//   }
+// }

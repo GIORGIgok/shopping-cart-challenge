@@ -1,5 +1,6 @@
 import { Product } from '@/types/graphql';
 import AddToCartButton from './add-to-cart-button';
+import { formatDate } from '../../lib/utils/date-formatter';
 
 export default async function ProductItem({
   productProps,
@@ -17,8 +18,16 @@ export default async function ProductItem({
         <span className="font-semibold">Qty: </span>
         <span>{productProps.availableQuantity}</span>
       </div>
-      <p className="text-sm text-blue-900">{productProps.createdAt}</p>
-      <p className="text-sm text-blue-900">{productProps.updatedAt}</p>
+      <div>
+        <span className="text-xs font-semibold">Created: </span>
+        <p className="text-sm text-blue-900">
+          {formatDate(productProps.createdAt)}
+        </p>
+        <span className="text-xs font-semibold">Updated: </span>
+        <p className="text-sm text-blue-900">
+          {formatDate(productProps.updatedAt)}
+        </p>
+      </div>
 
       <AddToCartButton product={productProps} />
     </article>

@@ -2,15 +2,13 @@
 
 import { HttpLink, ApolloLink } from '@apollo/client';
 import {
-  ApolloNextAppProvider,
   ApolloClient,
   InMemoryCache,
 } from '@apollo/experimental-nextjs-app-support';
 import { parseCookies } from 'nookies';
 
-function makeClient() {
+export function makeClient() {
   const authMiddleware = new ApolloLink((operation, forward) => {
-    // getting the token on client
     const { visitor_token: token } = parseCookies();
     // console.log('Apollo client token:', token);
 
@@ -26,7 +24,7 @@ function makeClient() {
   const httpLink = new HttpLink({
     uri: process.env.NEXT_PUBLIC_API_URL,
     fetchOptions: {
-      cache: 'no-store',
+      cache: 'no-cache',
       credentials: 'include',
     },
   });
@@ -35,12 +33,4 @@ function makeClient() {
     cache: new InMemoryCache(),
     link: ApolloLink.from([authMiddleware, httpLink]),
   });
-}
-
-export function ApolloWrapper({ children }: React.PropsWithChildren) {
-  return (
-    <ApolloNextAppProvider makeClient={makeClient}>
-      {children}
-    </ApolloNextAppProvider>
-  );
 }
