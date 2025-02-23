@@ -1,47 +1,51 @@
-import { cookies } from 'next/headers';
-import { print } from 'graphql/language/printer';
-import { GET_PRODUCTS } from '@/lib/graphql/queries/queries';
+'use client';
+
+import { useQuery } from '@apollo/client';
 import ProductItem from '@/components/products/product-item';
 import { Product } from '@/types/graphql';
 import FixedCart from '@/components/cart/fixed-cart';
+import { GET_PRODUCTS } from '@/lib/graphql/queries/queries';
+import { parseCookies } from 'nookies';
 import Link from 'next/link';
 
-async function fetchData(visitorToken: string) {
-  const query = print(GET_PRODUCTS);
+export default function ProductsPage() {
+  const { visitor_token: visitorToken } = parseCookies();
 
-  const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${visitorToken}`,
+  const { loading, error, data } = useQuery(GET_PRODUCTS, {
+    context: {
+      headers: {
+        Authorization: visitorToken ? `Bearer ${visitorToken}` : '',
+      },
     },
-    body: JSON.stringify({
-      query,
-    }),
+    skip: !visitorToken,
   });
 
-  const { data } = await response.json();
-  return data;
-}
-
-export default async function ProductsPage() {
-  const cookieStore = await cookies();
-  const token = cookieStore.get('visitor_token')?.value;
-
-  if (!token) {
+  if (loading) {
     return (
-      <div className="flex h-screen items-center justify-center">
-        <Link className="font-bold text-yellow-400" href="/">
-          Please log in to view products and cart.
-        </Link>
+      <section className="relative min-h-screen w-full bg-slate-600 p-4">
+        <FixedCart />
+        <h2 className="my-4 bg-gradient-to-r from-gray-200 to-violet-500 bg-clip-text text-center text-lg font-semibold text-transparent sm:text-2xl">
+          Our Products:
+        </h2>
+
+        <main className="flex h-[320px] w-full flex-wrap items-center justify-center gap-6">
+          <p className="text-center text-white">Loading products...</p>
+        </main>
+      </section>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="flex h-full min-h-screen items-center justify-center bg-slate-600">
+        <p className="text-white">Error: {error.message}</p>
+        <Link href="/">Back to Home</Link>
       </div>
     );
   }
 
-  const data = await fetchData(token);
-
   return (
-    <section className="relative w-full bg-slate-600 p-4">
+    <section className="relative min-h-screen w-full bg-slate-600 p-4">
       <FixedCart />
       <h2 className="my-4 bg-gradient-to-r from-gray-200 to-violet-500 bg-clip-text text-center text-lg font-semibold text-transparent sm:text-2xl">
         Our Products:

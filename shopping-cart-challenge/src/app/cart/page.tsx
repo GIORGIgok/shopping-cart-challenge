@@ -16,9 +16,7 @@ export default function CartPage() {
     error: contextError,
   } = useCart();
 
-  const { data, loading, error } = useQuery<{ getCart: Cart }>(GET_CART, {
-    fetchPolicy: 'network-only',
-  });
+  const { data, loading, error } = useQuery<{ getCart: Cart }>(GET_CART);
 
   useEffect(() => {
     if (data?.getCart) {

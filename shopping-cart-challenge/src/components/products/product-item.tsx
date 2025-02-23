@@ -1,8 +1,10 @@
+'use client';
+
 import { Product } from '@/types/graphql';
 import AddToCartButton from './add-to-cart-button';
 import { formatDate } from '../../lib/utils/date-formatter';
 
-export default async function ProductItem({
+export default function ProductItem({
   productProps,
 }: {
   productProps: Product;
