@@ -7,18 +7,10 @@ import FixedCart from '@/components/cart/fixed-cart';
 import { GET_PRODUCTS } from '@/lib/graphql/queries/queries';
 import { parseCookies } from 'nookies';
 import Link from 'next/link';
+import { useEffect, useState } from 'react';
 
 export default function ProductsPage() {
-  const { visitor_token: visitorToken } = parseCookies();
-
-  const { loading, error, data } = useQuery(GET_PRODUCTS, {
-    context: {
-      headers: {
-        Authorization: visitorToken ? `Bearer ${visitorToken}` : '',
-      },
-    },
-    skip: !visitorToken,
-  });
+  const { loading, error, data } = useQuery(GET_PRODUCTS);
 
   if (loading) {
     return (

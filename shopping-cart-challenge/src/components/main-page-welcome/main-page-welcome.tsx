@@ -29,7 +29,7 @@ const MainPageWelcome = () => {
 
       if (data?.register?.token) {
         setVisitorToken(data.register.token);
-        router.push('/products');
+        window.location.href = '/products';
       } else {
         console.error('Token not found in the response.');
       }
