@@ -10,7 +10,7 @@ export default function ProductItem({
   productProps: Product;
 }) {
   return (
-    <article className="h-full w-full max-w-[320px] rounded-md bg-slate-400 p-4 transition duration-[0.8s] md:cursor-pointer md:hover:scale-105">
+    <article className="h-full w-full max-w-[320px] rounded-md bg-slate-400 p-4 transition duration-[0.8s] hover:bg-slate-300 md:cursor-pointer md:hover:scale-105">
       <h3 className="font-bold text-slate-800">{productProps.title}</h3>
       <div className="border-t-2 border-slate-500">
         <span className="font-semibold text-slate-600">Price: </span>

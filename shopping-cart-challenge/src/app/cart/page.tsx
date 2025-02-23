@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { useCart } from '@/contexts/cart-context';
 import CartItem from '@/components/cart/cart-item';
+import CartNotifierSubscriptionModal from '@/components/cart/cart-notifier-sub-modal';
 
 export default function CartPage() {
   const { cart, loading: contextLoading, error: contextError } = useCart();
@@ -19,14 +20,15 @@ export default function CartPage() {
     );
   }
 
-  let notItems = cart?.items.length === 0;
-  let itemsInCart = cart?.items.length;
+  let notItems: boolean = cart?.items.length === 0;
+  let itemsInCart: number = cart?.items.length || 0;
 
   return (
-    <section className="h-auto min-h-screen w-full bg-slate-600 p-4">
+    <section className="relative h-auto min-h-screen w-full bg-slate-600 p-4">
+      <CartNotifierSubscriptionModal />
       <Link
         href="/products"
-        className="rounded-lg bg-slate-500 px-4 py-2 text-gray-200 transition-colors duration-150 hover:bg-slate-700"
+        className="rounded-lg bg-slate-700 px-4 py-2 text-gray-200 transition-colors duration-150 hover:bg-slate-400 hover:text-slate-700"
       >
         {' < '}Back to Products
       </Link>

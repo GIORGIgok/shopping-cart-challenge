@@ -10,7 +10,7 @@ const CartItem: FC<CartItemProps> = ({ item }) => {
   return (
     <article
       key={item._id}
-      className="flex items-center justify-between border-b border-gray-600 py-2"
+      className="flex items-center justify-between border-b border-gray-600 py-2 hover:md:bg-slate-700"
     >
       <div className="w-[340px] max-w-full pr-4 text-white sm:pr-0">
         <h3 className="text-sm font-semibold text-indigo-200 md:text-base">
