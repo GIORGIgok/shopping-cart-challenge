@@ -1,5 +1,7 @@
 import MainPageWelcome from '@/components/main-page-welcome/main-page-welcome';
 
+export const dynamic = 'force-static';
+
 export default function Home() {
   return (
     <main className="flex h-screen flex-col items-center justify-center gap-6 bg-gradient-to-t from-slate-800 from-10% via-slate-700 via-30% to-slate-800 to-80%">

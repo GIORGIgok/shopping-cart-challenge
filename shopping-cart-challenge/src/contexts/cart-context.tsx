@@ -67,38 +67,47 @@ export const CartProvider: React.FC<PropsWithChildren> = ({ children }) => {
 
   useSubscription(CART_ITEM_UPDATE, {
     onData: ({ data }) => {
-      console.log('Received subscription data:', data);
-      if (!data?.data?.cartItemUpdate) return;
+      console.log('Raw subscription data:', data);
+      if (!data?.data?.cartItemUpdate) {
+        console.log('No cart update data received');
+        return;
+      }
 
       const { event, payload } = data.data.cartItemUpdate;
-      console.log('event from ondata =>', event);
-      console.log('payload from ondata =>', payload);
+      console.log('Processing event:', event);
+      console.log('With payload:', payload);
 
       setCart((prevCart) => {
-        if (!prevCart) return prevCart;
-
-        switch (event) {
-          case 'ITEM_OUT_OF_STOCK':
-            return {
-              ...prevCart,
-              items: prevCart.items.filter(
-                (item) => item.product._id !== payload._id,
-              ),
-            };
-
-          case 'ITEM_QUANTITY_UPDATED':
-            return {
-              ...prevCart,
-              items: prevCart.items.map((item) =>
-                item.product._id === payload._id
-                  ? { ...item, quantity: payload.quantity }
-                  : item,
-              ),
-            };
-
-          default:
-            return prevCart;
+        if (!prevCart) {
+          console.log('No previous cart state');
+          return prevCart;
         }
+
+        const newCart = (() => {
+          switch (event) {
+            case 'ITEM_OUT_OF_STOCK':
+              return {
+                ...prevCart,
+                items: prevCart.items.filter(
+                  (item) => item.product._id !== payload._id,
+                ),
+              };
+            case 'ITEM_QUANTITY_UPDATED':
+              return {
+                ...prevCart,
+                items: prevCart.items.map((item) =>
+                  item.product._id === payload._id
+                    ? { ...item, quantity: payload.quantity }
+                    : item,
+                ),
+              };
+            default:
+              return prevCart;
+          }
+        })();
+
+        console.log('Updated cart state:', newCart);
+        return newCart;
       });
     },
   });

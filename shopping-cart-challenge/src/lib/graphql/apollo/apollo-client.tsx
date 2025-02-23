@@ -33,23 +33,34 @@ export function makeClient() {
     },
   });
 
-  // Only create WebSocket link if window is defined (client-side)
   const wsLink =
     typeof window !== 'undefined'
       ? new GraphQLWsLink(
           createClient({
             url:
               process.env.NEXT_PUBLIC_SOCKET_URL ||
-              process.env.NEXT_PUBLIC_API_URL?.replace('http', 'ws') ||
-              '',
+              process.env.NEXT_PUBLIC_API_URL?.replace(
+                'https://',
+                'wss://',
+              ).replace('http://', 'ws//') ||
+              'wss://take-home-be.onrender.com/api',
             connectionParams: {
-              authToken: token ? `Bearer ${token}` : '',
+              authToken: token || '',
             },
+            on: {
+              connected: () => console.log('WS Connected'),
+              closed: (event) => {
+                console.log('WS Closed', event);
+              },
+              error: (error) => console.error('WS Error:', error),
+            },
+            shouldRetry: () => true,
+            retryAttempts: 3,
+            connectionAckWaitTimeout: 8000,
           }),
         )
       : null;
 
-  // Modify split logic to account for null wsLink
   const splitLink =
     typeof window !== 'undefined' && wsLink
       ? split(

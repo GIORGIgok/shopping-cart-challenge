@@ -1,40 +1,21 @@
 'use client';
 
-import { useEffect } from 'react';
 import Link from 'next/link';
 import { useCart } from '@/contexts/cart-context';
-import { useQuery } from '@apollo/client';
-import { GET_CART } from '@/lib/graphql/queries/queries';
-import { Cart } from '@/types/graphql';
 import CartItem from '@/components/cart/cart-item';
 
 export default function CartPage() {
-  const {
-    cart,
-    setCart,
-    loading: contextLoading,
-    error: contextError,
-  } = useCart();
+  const { cart, loading: contextLoading, error: contextError } = useCart();
 
-  const { data, loading, error } = useQuery<{ getCart: Cart }>(GET_CART);
-
-  useEffect(() => {
-    if (data?.getCart) {
-      setCart(data.getCart);
-    }
-  }, [data, setCart]);
-
-  if (contextLoading || loading) {
+  if (contextLoading) {
     <article className="flex h-screen min-h-screen w-full items-center justify-center bg-slate-600">
       <p className="text-center text-white">Loading cart...</p>;
     </article>;
   }
 
-  if (contextError || error) {
+  if (contextError) {
     return (
-      <p className="text-center text-white">
-        Error: {contextError?.message || error?.message}
-      </p>
+      <p className="text-center text-white">Error: {contextError?.message}</p>
     );
   }
 
