@@ -1,5 +1,5 @@
 'use client';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useQuery } from '@apollo/client';
 import { useCart } from '@/contexts/cart-context';
 import Link from 'next/link';
@@ -9,10 +9,15 @@ import { Cart } from '@/types/graphql';
 export default function FixedCart() {
   const { cart, setCart } = useCart();
 
+  const [localItemCount, setLocalItemCount] = useState<number>(
+    cart?.items?.length || 0,
+  );
+
   const { data }: { data?: { getCart: Cart } } = useQuery(GET_CART, {
     onCompleted: (data) => {
       if (data?.getCart) {
         setCart(data.getCart);
+        setLocalItemCount(data.getCart.items.length);
       }
     },
     onError: (err) => {
@@ -23,10 +28,11 @@ export default function FixedCart() {
   useEffect(() => {
     if (data?.getCart) {
       setCart(data.getCart);
+      setLocalItemCount(data.getCart.items.length);
     }
   }, [data, setCart]);
 
-  const totalItems = cart?.items?.length;
+  const totalItems = localItemCount;
 
   return (
     <Link href="/cart">
