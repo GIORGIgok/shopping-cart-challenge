@@ -20,8 +20,8 @@ export default function ProductsPage() {
           Our Products:
         </h2>
 
-        <main className="flex h-[320px] w-full flex-wrap items-center justify-center gap-6">
-          <p className="text-center text-white">Loading products...</p>
+        <main className="flex w-full justify-center">
+          <div className="loader"></div>
         </main>
       </section>
     );

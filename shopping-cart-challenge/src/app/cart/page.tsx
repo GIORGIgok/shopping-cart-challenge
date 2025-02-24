@@ -6,19 +6,7 @@ import CartItem from '@/components/cart/cart-item';
 import CartNotifierSubscriptionModal from '@/components/cart/cart-notifier-sub-modal';
 
 export default function CartPage() {
-  const { cart, loading: contextLoading, error: contextError } = useCart();
-
-  if (contextLoading) {
-    <article className="flex h-screen min-h-screen w-full items-center justify-center bg-slate-600">
-      <p className="text-center text-white">Loading cart...</p>;
-    </article>;
-  }
-
-  if (contextError) {
-    return (
-      <p className="text-center text-white">Error: {contextError?.message}</p>
-    );
-  }
+  const { cart, loading } = useCart();
 
   let notItems: boolean = cart?.items.length === 0;
   let itemsInCart: number = cart?.items.length || 0;
@@ -40,7 +28,7 @@ export default function CartPage() {
 
       <main className="mx-auto mt-4 max-w-xl rounded-lg bg-gray-700 p-4 shadow-lg">
         {notItems && (
-          <p className="text-center text-white">Your cart is empty.</p>
+          <p className="my-5 text-center text-white">Cart is empty.</p>
         )}
         {cart?.items.map((item) => <CartItem key={item._id} item={item} />)}
 

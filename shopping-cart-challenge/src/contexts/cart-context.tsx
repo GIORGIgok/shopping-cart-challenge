@@ -7,7 +7,7 @@ import React, {
   useEffect,
   PropsWithChildren,
 } from 'react';
-import { useQuery, useMutation, useSubscription } from '@apollo/client';
+import { useQuery, useMutation } from '@apollo/client';
 import { GET_CART } from '@/lib/graphql/queries/queries';
 import { ADD_ITEM } from '@/lib/graphql/mutations/mutations';
 import { Cart, Product } from '@/types/graphql';
@@ -70,7 +70,8 @@ export const CartProvider: React.FC<PropsWithChildren> = ({ children }) => {
     );
 
     if (existingItem) {
-      alert('This product is already in your cart!');
+      // alert('This product is already in your cart!');
+      return;
     } else {
       addProductToCart({
         variables: {

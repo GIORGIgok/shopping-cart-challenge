@@ -26,7 +26,7 @@ export default function AddToCartButton({ product }: { product: Product }) {
     isDisabled = true;
   } else if (isInCart) {
     buttonText = 'Already in Cart';
-    buttonStyle = 'bg-blue-600 opacity-70';
+    buttonStyle = 'bg-blue-600 opacity-50';
     isDisabled = true;
   } else {
     buttonText = 'Add to Cart';
