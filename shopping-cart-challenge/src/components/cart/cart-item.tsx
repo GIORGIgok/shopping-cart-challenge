@@ -1,6 +1,6 @@
 import { FC } from 'react';
 import { CartItem as CartItemType } from '@/types/graphql';
-import CartItemQtySwitcher from './cart-item-qty-switcher';
+import CartItemQtySwitcher from './buttons/cart-item-qty-switcher';
 
 interface CartItemProps {
   item: CartItemType;

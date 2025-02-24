@@ -1,7 +1,7 @@
 'use client';
 
 import { Product } from '@/types/graphql';
-import AddToCartButton from './add-to-cart-button';
+import AddToCartButton from './buttons/add-to-cart-button';
 import { formatDate } from '../../lib/utils/date-formatter';
 
 export default function ProductItem({

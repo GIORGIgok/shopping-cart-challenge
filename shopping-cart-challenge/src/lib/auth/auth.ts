@@ -1,5 +1,5 @@
 import { NextRequest } from 'next/server';
-import { VISITOR_TOKEN } from '@/constants/data';
+import { VISITOR_TOKEN } from '@/constants/token';
 
 export const setVisitorToken = (token: string) => {
   document.cookie = `${VISITOR_TOKEN}=${token}; path=/; Secure=true; SameSite=Strict; max-age=3600`; // 1hr

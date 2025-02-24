@@ -19,6 +19,7 @@ interface CartContextType {
   addToCart: (product: Product) => void;
   loading: boolean;
   error: Error | null;
+  refetch: () => Promise<any>;
 }
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
@@ -90,6 +91,7 @@ export const CartProvider: React.FC<PropsWithChildren> = ({ children }) => {
         addToCart,
         loading: queryLoading || mutationLoading,
         error: queryError || mutationError || error,
+        refetch,
       }}
     >
       {children}

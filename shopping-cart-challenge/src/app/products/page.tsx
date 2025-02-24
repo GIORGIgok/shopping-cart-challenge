@@ -2,13 +2,15 @@
 
 import { useQuery } from '@apollo/client';
 import ProductItem from '@/components/products/product-item';
-import { Product } from '@/types/graphql';
+import { GetProductsData, Product } from '@/types/graphql';
 import FixedCart from '@/components/cart/fixed-cart';
 import { GET_PRODUCTS } from '@/lib/graphql/queries/queries';
 import Link from 'next/link';
 
 export default function ProductsPage() {
-  const { loading, error, data } = useQuery(GET_PRODUCTS);
+  const { loading, error, data } = useQuery<GetProductsData>(GET_PRODUCTS, {
+    fetchPolicy: 'network-only',
+  });
 
   if (loading) {
     return (

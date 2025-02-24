@@ -8,8 +8,8 @@ import { setVisitorToken } from '@/lib/auth/auth';
 import { parseCookies } from 'nookies';
 
 const MainPageWelcome = () => {
-  const [isLoading, setIsLoading] = useState(false);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
   const router = useRouter();
 
   const [registerUser] = useMutation(REGISTER);

@@ -4,10 +4,16 @@ import React, { useEffect, useState } from 'react';
 import { useSubscription } from '@apollo/client';
 import { CART_ITEM_UPDATE } from '@/lib/graphql/subscriptions/subscriptions';
 import { CartItemMessage } from '@/types/graphql';
+import { useCart } from '@/contexts/cart-context';
+import { PRODUCTS_PAGE_PATH } from '@/constants/paths';
+import { useRouter } from 'next/navigation';
 
 const CartNotifierSubscriptionModal = () => {
+  const router = useRouter();
   const [modalMessage, setModalMessage] = useState('');
   const [isModalVisible, setIsModalVisible] = useState(false);
+
+  const { refetch } = useCart();
 
   const { data } = useSubscription<{
     cartItemUpdate: CartItemMessage;
@@ -22,11 +28,13 @@ const CartNotifierSubscriptionModal = () => {
         const { event, payload } = data.cartItemUpdate;
         console.log('Event:', event, 'Payload:', payload);
 
+        // ITEM_QUANTITY_UPDATED event is not available || I suspect that backend has a bug.
         if (event === 'ITEM_QUANTITY_UPDATED') {
           setModalMessage(
             'Your Items quantity updated due to stock changes. Return to cart?',
           );
           setIsModalVisible(true);
+          // ITEM_OUT_OF_STOCK event works FINE.
         } else if (event === 'ITEM_OUT_OF_STOCK') {
           setModalMessage(
             'An item in your cart is out of stock. Return to the cart?',
@@ -43,13 +51,14 @@ const CartNotifierSubscriptionModal = () => {
   }, [data]);
 
   const handleModalClose = () => {
+    refetch();
     setIsModalVisible(false);
-    window.location.reload();
   };
 
-  const handleReturnToProducts = () => {
+  const handleNavigateToProductsPage = () => {
+    refetch();
     setIsModalVisible(false);
-    window.location.href = '/products';
+    router.push(PRODUCTS_PAGE_PATH);
   };
 
   return (
@@ -85,7 +94,7 @@ const CartNotifierSubscriptionModal = () => {
               </button>
               <button
                 className="mt-4 rounded-lg bg-red-300 px-4 py-2 text-white"
-                onClick={handleReturnToProducts}
+                onClick={handleNavigateToProductsPage}
               >
                 No
               </button>

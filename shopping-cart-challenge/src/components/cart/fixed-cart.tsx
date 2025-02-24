@@ -4,11 +4,12 @@ import { useQuery } from '@apollo/client';
 import { useCart } from '@/contexts/cart-context';
 import Link from 'next/link';
 import { GET_CART } from '@/lib/graphql/queries/queries';
+import { Cart } from '@/types/graphql';
 
 export default function FixedCart() {
   const { cart, setCart } = useCart();
 
-  const { data } = useQuery(GET_CART, {
+  const { data }: { data?: { getCart: Cart } } = useQuery(GET_CART, {
     onCompleted: (data) => {
       if (data?.getCart) {
         setCart(data.getCart);

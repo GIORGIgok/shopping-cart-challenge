@@ -25,21 +25,14 @@ export type Cart = {
   updatedAt: string;
 };
 
-export type Visitor = {
-  _id: string;
-  token: string;
-  cartId: string;
-  isActive: boolean;
-  createdAt: string;
-  updatedAt: string;
-};
-
 export type CartItemMessage = {
   event: 'ITEM_QUANTITY_UPDATED' | 'ITEM_OUT_OF_STOCK';
   payload: CartItem;
 };
 
 export type GetProductsData = {
-  products: Product[];
-  total: number;
+  getProducts: {
+    products: Product[];
+    total: number;
+  };
 };
