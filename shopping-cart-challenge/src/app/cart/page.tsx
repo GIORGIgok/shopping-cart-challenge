@@ -6,7 +6,7 @@ import CartItem from '@/components/cart/cart-item';
 import CartNotifierSubscriptionModal from '@/components/cart/cart-notifier-sub-modal';
 
 export default function CartPage() {
-  const { cart, loading } = useCart();
+  const { cart } = useCart();
 
   let notItems: boolean = cart?.items.length === 0;
   let itemsInCart: number = cart?.items.length || 0;
@@ -26,13 +26,13 @@ export default function CartPage() {
           : `You have ${itemsInCart} item(s) in your cart.`}
       </h2>
 
-      <main className="mx-auto mt-4 max-w-xl rounded-lg bg-gray-700 p-4 shadow-lg">
+      <main className="mx-auto mt-4 max-w-xl rounded-lg border-2 border-slate-400 bg-gray-700 p-4 shadow-lg">
         {notItems && (
           <p className="my-5 text-center text-white">Cart is empty.</p>
         )}
         {cart?.items.map((item) => <CartItem key={item._id} item={item} />)}
 
-        <div className="mt-4 text-right text-lg font-bold text-green-200">
+        <div className="mt-4 text-right text-sm font-bold text-green-200 sm:text-lg">
           Total: $
           {cart?.items
             .reduce((sum, item) => sum + item.quantity * item.product.cost, 0)

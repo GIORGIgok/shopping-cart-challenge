@@ -9,13 +9,16 @@ import {
 } from '@/lib/utils/validation';
 import { CartItem } from '@/types/graphql';
 import { useMutation } from '@apollo/client';
-import { FC } from 'react';
+import { FC, useState, useRef } from 'react';
 
 interface CartItemProps {
   cartItemProps: CartItem;
 }
 
 const CartItemQtySwitcher: FC<CartItemProps> = ({ cartItemProps }) => {
+  const [isLoading, setIsLoading] = useState(false);
+  const debounceTimerRef = useRef<NodeJS.Timeout | null>(null);
+
   const [updateQuantity] = useMutation(UPDATE_ITEM_QUANTITY, {
     update(cache, { data }) {
       const existingCart = cache.readQuery({ query: GET_CART });
@@ -27,6 +30,10 @@ const CartItemQtySwitcher: FC<CartItemProps> = ({ cartItemProps }) => {
     },
     onError(error) {
       console.error(error);
+      setIsLoading(false);
+    },
+    onCompleted() {
+      setIsLoading(false);
     },
   });
 
@@ -41,67 +48,104 @@ const CartItemQtySwitcher: FC<CartItemProps> = ({ cartItemProps }) => {
     },
     onError(error) {
       console.error(error);
+      setIsLoading(false);
+    },
+    onCompleted() {
+      setIsLoading(false);
     },
   });
 
-  const validateAndDecreaseQuantity = async () => {
-    try {
-      if (cartItemProps.quantity === 1) {
-        const removeInput = { cartItemId: cartItemProps._id };
-        await cartRemoveItemSchema.parseAsync(removeInput);
-        removeItem({
-          variables: { input: removeInput },
-        });
-      } else {
+  const debounce = (callback: () => void, delay = 300) => {
+    if (debounceTimerRef.current) {
+      clearTimeout(debounceTimerRef.current);
+    }
+
+    debounceTimerRef.current = setTimeout(() => {
+      callback();
+    }, delay);
+  };
+
+  const validateAndDecreaseQuantity = () => {
+    if (isLoading) return;
+
+    setIsLoading(true);
+
+    debounce(async () => {
+      try {
+        if (cartItemProps.quantity === 1) {
+          const removeInput = { cartItemId: cartItemProps._id };
+          await cartRemoveItemSchema.parseAsync(removeInput);
+          removeItem({
+            variables: { input: removeInput },
+          });
+        } else {
+          const updateInput = {
+            cartItemId: cartItemProps._id,
+            quantity: cartItemProps.quantity - 1,
+          };
+          await cartUpdateItemQuantitySchema.parseAsync(updateInput);
+          updateQuantity({
+            variables: { input: updateInput },
+          });
+        }
+      } catch (err) {
+        console.warn(err);
+        setIsLoading(false);
+      }
+    });
+  };
+
+  const validateAndIncreaseQuantity = () => {
+    if (isLoading) return;
+
+    setIsLoading(true);
+
+    debounce(async () => {
+      try {
+        if (cartItemProps.quantity >= cartItemProps.product.availableQuantity) {
+          console.warn('Maximum quantity reached');
+          setIsLoading(false);
+          return;
+        }
+
         const updateInput = {
           cartItemId: cartItemProps._id,
-          quantity: cartItemProps.quantity - 1,
+          quantity: cartItemProps.quantity + 1,
         };
+
         await cartUpdateItemQuantitySchema.parseAsync(updateInput);
         updateQuantity({
           variables: { input: updateInput },
         });
+      } catch (err) {
+        console.warn(err);
+        setIsLoading(false);
       }
-    } catch (err) {
-      console.warn(err);
-    }
-  };
-
-  const validateAndIncreaseQuantity = async () => {
-    try {
-      if (cartItemProps.quantity >= cartItemProps.product.availableQuantity) {
-        console.warn('Maximum quantity reached');
-        return;
-      }
-
-      const updateInput = {
-        cartItemId: cartItemProps._id,
-        quantity: cartItemProps.quantity + 1,
-      };
-
-      await cartUpdateItemQuantitySchema.parseAsync(updateInput);
-      updateQuantity({
-        variables: { input: updateInput },
-      });
-    } catch (err) {
-      console.warn(err);
-    }
+    });
   };
 
   return (
     <div className="flex items-center space-x-2">
       <button
         onClick={validateAndDecreaseQuantity}
-        className="rounded bg-red-500 px-3 py-1 text-white hover:bg-red-700"
+        disabled={isLoading}
+        className={`rounded-lg bg-red-500 px-3 py-1 text-white hover:bg-red-700 ${
+          isLoading ? 'opacity-50' : ''
+        }`}
       >
         -
       </button>
       <span className="text-white">{cartItemProps.quantity}</span>
       <button
         onClick={validateAndIncreaseQuantity}
-        className={`rounded bg-green-500 px-3 py-1 text-white hover:bg-green-700 ${
+        disabled={
+          isLoading ||
           cartItemProps.quantity >= cartItemProps.product.availableQuantity
-            ? 'cursor-not-allowed opacity-50'
+        }
+        className={`rounded-lg bg-green-500 px-3 py-1 text-white hover:bg-green-700 ${
+          isLoading ||
+          cartItemProps.quantity >= cartItemProps.product.availableQuantity
+            ? 'opacity-50'
             : ''
         }`}
       >

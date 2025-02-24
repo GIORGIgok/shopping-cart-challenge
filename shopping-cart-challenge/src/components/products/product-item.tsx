@@ -13,11 +13,11 @@ export default function ProductItem({
     <article className="h-full w-full max-w-[320px] rounded-md bg-slate-400 p-4 transition duration-[0.8s] hover:bg-slate-300 md:cursor-pointer md:hover:scale-105">
       <h3 className="font-bold text-slate-800">{productProps.title}</h3>
       <div className="border-t-2 border-slate-500">
-        <span className="font-semibold text-slate-600">Price: </span>
-        <span className="text-slate-800">{productProps.cost}</span>
+        <span className="text-sm font-semibold text-slate-600">Price: </span>
+        <span className="text-slate-800">${productProps.cost}</span>
       </div>
       <div>
-        <span className="font-semibold text-slate-600">In-stock: </span>
+        <span className="text-sm font-semibold text-slate-600">In-stock: </span>
         <span className="text-slate-800">{productProps.availableQuantity}</span>
       </div>
       <div>
@@ -31,7 +31,9 @@ export default function ProductItem({
         </p>
       </div>
 
-      <AddToCartButton product={productProps} />
+      <div className="w-full text-right">
+        <AddToCartButton product={productProps} />
+      </div>
     </article>
   );
 }
