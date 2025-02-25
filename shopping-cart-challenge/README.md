@@ -46,4 +46,3 @@ Apollo Client is used for GraphQL operations
 ##### Authentication
 
 Token is stored in cookies with a 1-hour expiration period for security. Users will need to re-authenticate after this period.
-Code Review Information
