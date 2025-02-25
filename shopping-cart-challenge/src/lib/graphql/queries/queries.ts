@@ -52,21 +52,3 @@ export const ADD_ITEM = gql`
     }
   }
 `;
-
-export const REMOVE_ITEM = gql`
-  mutation removeItem($cartItemId: ID!) {
-    removeItem(input: { cartItemId: $cartItemId }) {
-      _id
-      hash
-      items {
-        _id
-        product {
-          _id
-          title
-          cost
-        }
-        quantity
-      }
-    }
-  }
-`;

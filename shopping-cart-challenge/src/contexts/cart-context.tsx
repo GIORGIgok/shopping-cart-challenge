@@ -9,14 +9,12 @@ import React, {
 } from 'react';
 import { useQuery, useMutation } from '@apollo/client';
 import { GET_CART } from '@/lib/graphql/queries/queries';
-import { ADD_ITEM } from '@/lib/graphql/mutations/mutations';
 import { Cart, Product } from '@/types/graphql';
 import { parseCookies } from 'nookies';
 
 interface CartContextType {
   cart: Cart | null;
   setCart: React.Dispatch<React.SetStateAction<Cart | null>>;
-  addToCart: (product: Product) => void;
   loading: boolean;
   error: Error | null;
   refetch: () => Promise<any>;
@@ -42,18 +40,6 @@ export const CartProvider: React.FC<PropsWithChildren> = ({ children }) => {
     },
   });
 
-  const [addProductToCart, { loading: mutationLoading, error: mutationError }] =
-    useMutation(ADD_ITEM, {
-      onCompleted: (data) => {
-        setCart(data.addToCart);
-        refetch();
-      },
-      onError: (err) => {
-        console.error('Error adding to cart:', err);
-        setError(err);
-      },
-    });
-
   useEffect(() => {
     if (data?.getCart) {
       setCart(data.getCart);
@@ -64,34 +50,13 @@ export const CartProvider: React.FC<PropsWithChildren> = ({ children }) => {
     };
   }, [data]);
 
-  const addToCart = (product: Product) => {
-    const existingItem = cart?.items.find(
-      (item) => item.product._id === product._id,
-    );
-
-    if (existingItem) {
-      // alert('This product is already in your cart!');
-      return;
-    } else {
-      addProductToCart({
-        variables: {
-          input: {
-            productId: product._id,
-            quantity: 1,
-          },
-        },
-      });
-    }
-  };
-
   return (
     <CartContext.Provider
       value={{
         cart,
         setCart,
-        addToCart,
-        loading: queryLoading || mutationLoading,
-        error: queryError || mutationError || error,
+        loading: queryLoading,
+        error: queryError || error,
         refetch,
       }}
     >
