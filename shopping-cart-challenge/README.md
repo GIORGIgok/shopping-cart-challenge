@@ -1,36 +1,49 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# E-Commerce Application (shopping-cart-challenge)
 
-## Getting Started
+**Overview**
+This project is an e-commerce style application that allows users to browse products, add them to their cart, and manage product quantities. The application features real-time notifications via WebSocket connections when cart quantities change.
 
-First, run the development server:
+## Features
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+User authentication (registration and login required for cart operations);
+Shopping cart functionality;
+Real-time notifications using GraphQL subscriptions,
+Form validations using Zod.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Technology Stack
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+**Frontend:** NextJS
+** Styles**: TailwindCSS
+**State Management:** Apollo Client
+**API:** GraphQL (queries and mutations)
+**Real-time Updates:** GraphQL WebSocket subscriptions
+**Authentication:** JWT stored in cookies
+**Form Validation:** Zod
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## User Flow
 
-## Learn More
+- Users must register/login to access cart functionality;
+- Upon successful authentication, a token is stored in cookies (expires after 1 hour);
+- Users can browse and add products to their cart;
+- Cart quantity can be increased/decreased;
+- When cart quantity changes or reaches zero, users receive real-time notifications via **modal**.
 
-To learn more about Next.js, take a look at the following resources:
+---
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### Development Notes
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+GraphQL subscriptions (graph-ws) provide real-time updates
+Apollo Client is used for GraphQL operations
 
-## Deploy on Vercel
+**For code reviewers:** .env file is included in the repository for evaluation purposes only. In production, these values would be secured properly.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+#### Setup
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+1. Clone the repository
+2. Install dependencies with npm install
+3. Start the development server with **npm run dev**
+
+##### Authentication
+
+Token is stored in cookies with a 1-hour expiration period for security. Users will need to re-authenticate after this period.
+Code Review Information
